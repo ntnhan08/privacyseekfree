@@ -61,7 +61,31 @@ function App() {
             <stop offset="0%" stopColor="#991b1b" />
             <stop offset="100%" stopColor="#450a0a" />
           </linearGradient>
+          <linearGradient id="topLidGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stopColor="#7f1d1d" />
+            <stop offset="40%" stopColor="#991b1b" />
+            <stop offset="100%" stopColor="#450a0a" />
+          </linearGradient>
+          <linearGradient id="bottomLidGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#991b1b" />
+            <stop offset="60%" stopColor="#7f1d1d" />
+            <stop offset="100%" stopColor="#450a0a" />
+          </linearGradient>
+          <radialGradient id="irisDepth" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="transparent" />
+            <stop offset="70%" stopColor="transparent" />
+            <stop offset="100%" stopColor="#450a0a" stopOpacity="0.8" />
+          </radialGradient>
+          <filter id="eyeGlow">
+            <feGaussianBlur stdDeviation="8" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
         </defs>
+
+
 
         {/* Background */}
         <rect width="1200" height="400" fill="url(#eyeBg)" />
@@ -93,45 +117,196 @@ function App() {
           <polygon points="60,20 60,50 30,65 30,35" fill="#7f1d1d" />
         </g>
 
-        {/* THE EYE - 3D style */}
-        <g transform="translate(600, 160)" filter="url(#eyeShadow)">
-          {/* Outer eye shape - almond */}
+        {/* THE EYE - 3D style with blink */}
+        <g transform="translate(600, 160)">
+          {/* Eye socket shadow - 3D depth */}
+          <ellipse cx="0" cy="10" rx="200" ry="130" fill="#000" opacity="0.4" filter="url(#eyeGlow)" />
+          <ellipse cx="0" cy="5" rx="190" ry="125" fill="#1a0000" opacity="0.6" />
+
+          {/* Outer eye shape - almond with 3D gradient */}
           <path
             d="M-180,0 C-180,-80 -90,-120 0,-120 C90,-120 180,-80 180,0 C180,80 90,120 0,120 C-90,120 -180,80 -180,0 Z"
             fill="url(#eyeWhite)"
             stroke="#7f1d1d"
             strokeWidth="3"
+            filter="url(#eyeShadow)"
           />
+
+          {/* Inner shadow on sclera for 3D depth */}
+          <path
+            d="M-180,0 C-180,-80 -90,-120 0,-120 C90,-120 180,-80 180,0 C180,80 90,120 0,120 C-90,120 -180,80 -180,0 Z"
+            fill="none"
+            stroke="#450a0a"
+            strokeWidth="12"
+            opacity="0.3"
+          />
+
+          {/* Blood vessels - subtle red lines */}
+          <path d="M-150,-20 Q-120,-15 -100,-5" fill="none" stroke="#dc2626" strokeWidth="0.5" opacity="0.3" />
+          <path d="M-140,30 Q-110,25 -90,15" fill="none" stroke="#dc2626" strokeWidth="0.5" opacity="0.3" />
+          <path d="M150,-25 Q120,-20 100,-10" fill="none" stroke="#dc2626" strokeWidth="0.5" opacity="0.3" />
+          <path d="M145,25 Q115,20 95,10" fill="none" stroke="#dc2626" strokeWidth="0.5" opacity="0.3" />
+
+          {/* Iris - 3D layered with subtle movement */}
+          <g>
+            <animateTransform
+              attributeName="transform"
+              type="translate"
+              values="0,0; 5,0; 0,0; -5,0; 0,0"
+              dur="8s"
+              repeatCount="indefinite"
+            />
+            <circle cx="0" cy="0" r="72" fill="#450a0a" opacity="0.8" />
+            <circle cx="0" cy="0" r="70" fill="url(#irisGrad)" />
+            <circle cx="0" cy="0" r="70" fill="url(#irisDepth)" />
+
+          {/* Iris pattern rings - 3D depth with subtle pulse */}
+          <circle cx="0" cy="0" r="68" fill="none" stroke="#dc2626" strokeWidth="1" opacity="0.6">
+            <animate attributeName="opacity" values="0.6;0.4;0.6" dur="6s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="0" cy="0" r="62" fill="none" stroke="#ef4444" strokeWidth="0.8" opacity="0.5">
+            <animate attributeName="opacity" values="0.5;0.3;0.5" dur="6s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="0" cy="0" r="55" fill="none" stroke="#b91c1c" strokeWidth="0.6" opacity="0.4">
+            <animate attributeName="opacity" values="0.4;0.25;0.4" dur="6s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="0" cy="0" r="48" fill="none" stroke="#991b1b" strokeWidth="0.5" opacity="0.3" />
+          <circle cx="0" cy="0" r="40" fill="none" stroke="#7f1d1d" strokeWidth="0.4" opacity="0.3" />
+
+          {/* Iris rays - 3D fiber pattern */}
+          {Array.from({ length: 36 }).map((_, i) => {
+            const angle = (i * 10 * Math.PI) / 180;
+            const x1 = Math.cos(angle) * 28;
+            const y1 = Math.sin(angle) * 28;
+            const x2 = Math.cos(angle) * 68;
+            const y2 = Math.sin(angle) * 68;
+            return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#7f1d1d" strokeWidth="0.6" opacity="0.4" />;
+          })}
+
+          {/* Iris highlight - 3D shine */}
+          <ellipse cx="-20" cy="-25" rx="25" ry="30" fill="white" opacity="0.15" />
+
+          {/* Pupil - 3D depth with dilation animation */}
+          <circle cx="0" cy="0" r="30" fill="#000" opacity="0.3">
+            <animate attributeName="r" values="30;32;30" dur="3s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="0" cy="0" r="28" fill="url(#pupilGrad)">
+            <animate attributeName="r" values="28;30;28" dur="3s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="0" cy="0" r="28" fill="none" stroke="#1a1a1a" strokeWidth="2" opacity="0.5">
+            <animate attributeName="r" values="28;30;28" dur="3s" repeatCount="indefinite" />
+          </circle>
+
+          {/* Pupil inner glow */}
+          <circle cx="0" cy="0" r="20" fill="#1a1a1a" opacity="0.8">
+            <animate attributeName="r" values="20;22;20" dur="3s" repeatCount="indefinite" />
+          </circle>
+
+          {/* Light reflections - 3D highlights with subtle animation */}
+          <ellipse cx="-15" cy="-18" rx="10" ry="12" fill="white" opacity="0.9">
+            <animate attributeName="opacity" values="0.9;0.7;0.9" dur="4s" repeatCount="indefinite" />
+          </ellipse>
+          <ellipse cx="-12" cy="-15" rx="6" ry="8" fill="white" opacity="1">
+            <animate attributeName="opacity" values="1;0.8;1" dur="4s" repeatCount="indefinite" />
+          </ellipse>
+          <circle cx="18" cy="15" r="5" fill="white" opacity="0.5">
+            <animate attributeName="opacity" values="0.5;0.3;0.5" dur="5s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="20" cy="18" r="3" fill="white" opacity="0.3">
+            <animate attributeName="opacity" values="0.3;0.15;0.3" dur="5s" repeatCount="indefinite" />
+          </circle>
+
+          {/* Rim light - 3D edge highlight */}
+          <circle cx="0" cy="0" r="70" fill="none" stroke="#fca5a5" strokeWidth="1" opacity="0.3" />
+          </g>
+
           {/* Eyelid shadow top */}
           <path
             d="M-180,0 C-180,-80 -90,-120 0,-120 C90,-120 180,-80 180,0"
             fill="none"
             stroke="url(#lidGrad)"
-            strokeWidth="8"
-            opacity="0.4"
+            strokeWidth="10"
+            opacity="0.5"
           />
-          {/* Iris */}
-          <circle cx="0" cy="0" r="70" fill="url(#irisGrad)" />
-          {/* Iris pattern rings */}
-          <circle cx="0" cy="0" r="65" fill="none" stroke="#dc2626" strokeWidth="0.5" opacity="0.5" />
-          <circle cx="0" cy="0" r="55" fill="none" stroke="#b91c1c" strokeWidth="0.5" opacity="0.4" />
-          <circle cx="0" cy="0" r="45" fill="none" stroke="#991b1b" strokeWidth="0.5" opacity="0.3" />
-          {/* Iris rays */}
-          {Array.from({ length: 24 }).map((_, i) => {
-            const angle = (i * 15 * Math.PI) / 180;
-            const x1 = Math.cos(angle) * 25;
-            const y1 = Math.sin(angle) * 25;
-            const x2 = Math.cos(angle) * 65;
-            const y2 = Math.sin(angle) * 65;
-            return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#7f1d1d" strokeWidth="0.8" opacity="0.3" />;
-          })}
-          {/* Pupil */}
-          <circle cx="0" cy="0" r="28" fill="url(#pupilGrad)" />
-          {/* Light reflection */}
-          <ellipse cx="-12" cy="-15" rx="8" ry="10" fill="white" opacity="0.8" />
-          <circle cx="15" cy="12" r="4" fill="white" opacity="0.4" />
-          {/* 3D depth ring */}
-          <circle cx="0" cy="0" r="70" fill="none" stroke="#450a0a" strokeWidth="2" opacity="0.6" />
+
+          {/* Eyelid shadow bottom */}
+          <path
+            d="M-180,0 C-180,80 -90,120 0,120 C90,120 180,80 180,0"
+            fill="none"
+            stroke="url(#lidGrad)"
+            strokeWidth="8"
+            opacity="0.3"
+          />
+
+          {/* BLINKING EYELIDS - 3D with gradient */}
+          <g className="eyelid-group">
+            {/* Top eyelid shadow */}
+            <path
+              d="M-190,5 C-190,-80 -100,-120 0,-120 C100,-120 190,-80 190,5 L190,15 L-190,15 Z"
+              fill="#000"
+              opacity="0.3"
+              filter="url(#eyeGlow)"
+            >
+              <animate attributeName="opacity" values="0;0;0.3;0.3;0" keyTimes="0;0.92;0.94;0.96;1" dur="4s" repeatCount="indefinite" />
+            </path>
+            {/* Top eyelid - 3D with gradient */}
+            <path
+              d="M-185,0 C-185,-85 -95,-125 0,-125 C95,-125 185,-85 185,0 L185,-140 L-185,-140 Z"
+              fill="url(#topLidGrad)"
+              opacity="0"
+            >
+              <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.92;0.94;0.96;1" dur="4s" repeatCount="indefinite" />
+            </path>
+            {/* Top eyelid highlight */}
+            <path
+              d="M-150,-30 C-100,-70 -50,-90 0,-90 C50,-90 100,-70 150,-30"
+              fill="none"
+              stroke="#dc2626"
+              strokeWidth="1"
+              opacity="0"
+            >
+              <animate attributeName="opacity" values="0;0;0.4;0.4;0" keyTimes="0;0.92;0.94;0.96;1" dur="4s" repeatCount="indefinite" />
+            </path>
+
+            {/* Bottom eyelid - 3D with gradient */}
+            <path
+              d="M-185,0 C-185,85 -95,125 0,125 C95,125 185,85 185,0 L185,140 L-185,140 Z"
+              fill="url(#bottomLidGrad)"
+              opacity="0"
+            >
+              <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.92;0.94;0.96;1" dur="4s" repeatCount="indefinite" />
+            </path>
+            {/* Bottom eyelid highlight */}
+            <path
+              d="M-150,30 C-100,70 -50,90 0,90 C50,90 100,70 150,30"
+              fill="none"
+              stroke="#b91c1c"
+              strokeWidth="1"
+              opacity="0"
+            >
+              <animate attributeName="opacity" values="0;0;0.3;0.3;0" keyTimes="0;0.92;0.94;0.96;1" dur="4s" repeatCount="indefinite" />
+            </path>
+
+            {/* Eyelid edge - lash line */}
+            <path
+              d="M-185,0 C-185,-85 -95,-125 0,-125 C95,-125 185,-85 185,0"
+              fill="none"
+              stroke="#1a0000"
+              strokeWidth="3"
+              opacity="0"
+            >
+              <animate attributeName="opacity" values="0;0;0.8;0.8;0" keyTimes="0;0.92;0.94;0.96;1" dur="4s" repeatCount="indefinite" />
+            </path>
+            <path
+              d="M-185,0 C-185,85 -95,125 0,125 C95,125 185,85 185,0"
+              fill="none"
+              stroke="#1a0000"
+              strokeWidth="2"
+              opacity="0"
+            >
+              <animate attributeName="opacity" values="0;0;0.6;0.6;0" keyTimes="0;0.92;0.94;0.96;1" dur="4s" repeatCount="indefinite" />
+            </path>
+          </g>
         </g>
 
         {/* Title */}
